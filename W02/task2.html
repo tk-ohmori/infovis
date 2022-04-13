@@ -1,0 +1,18 @@
+<html>
+    <head>
+	<title>task2</title>
+    </head>
+    <body>
+		<p id="min"></p>
+		<p id="mid"></p>
+		<p id="max"></p>
+		<script src="vec3.js"></script>
+		<script>
+			var x = 5, y = 4, z = 8;
+			var v = new Vec3( x, y, z );
+			document.getElementById("min").innerHTML = "min:" + v.min();
+			document.getElementById("mid").innerHTML = "mid:" + v.mid();
+			document.getElementById("max").innerHTML = "max:" + v.max();
+		</script>
+    </body>
+</html>

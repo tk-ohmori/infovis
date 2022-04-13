@@ -1,0 +1,54 @@
+<html>
+    <head>
+	<title>task3</title>
+    </head>
+    <body>
+        <table>
+            <tbody>
+                <tr>
+                    <td>v0:</td>
+                    <td><input type="number" id="x0" placeholder="x0"></td>
+                    <td><input type="number" id="y0" placeholder="y0"></td>
+                    <td><input type="number" id="z0" placeholder="z0"></td>
+                </tr>
+                <tr>
+                    <td>v1:</td>
+                    <td><input type="number" id="x1" placeholder="x1"></td>
+                    <td><input type="number" id="y1" placeholder="y1"></td>
+                    <td><input type="number" id="z1" placeholder="z1"></td>
+                </tr>
+                <tr>
+                    <td>v2:</td>
+                    <td><input type="number" id="x2" placeholder="x2"></td>
+                    <td><input type="number" id="y2" placeholder="y2"></td>
+                    <td><input type="number" id="z2" placeholder="z2"></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="button" value="calculate" onclick="c()">
+        <p id="result"></p>
+
+		<script src="vec3.js"></script>
+		<script>
+            function AreaOfTriangle(v0,v1,v2){
+                var u = new Vec3(v1.x-v0.x, v1.y-v0.y, v1.z-v0.z);
+                var v = new Vec3(v2.x-v0.x, v2.y-v0.y, v2.z-v0.z);
+                var a = Math.pow(u.y*v.z-u.z*v.y,2);
+                var b = Math.pow(u.z*v.x-u.x*v.z,2);
+                var c = Math.pow(u.x*v.y-u.y*v.x,2);
+                return Math.sqrt(a + b + c)/2.0
+            }
+
+            function c(){
+                var v = [];
+                for(i=0;i<3;i++){
+                    var x = parseFloat(document.getElementById("x"+i).value);
+                    var y = parseFloat(document.getElementById("y"+i).value);
+                    var z = parseFloat(document.getElementById("z"+i).value);
+                    v.push(new Vec3(x, y, z))
+                }
+                document.getElementById("result").innerHTML = "result:" + AreaOfTriangle(v[0], v[1], v[2]);
+            }
+		</script>
+    </body>
+</html>
