@@ -5,9 +5,9 @@
     <body>
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script>
-            var padding = 100;
+            var padding = 10;
             var height = 20;
-            var svg = d3.select("body").append("svg");
+            var svg = d3.select("body").append("svg").setAttribute("width",600).setAttribute("height",600);
             d3.csv("https://tk-ohmori.github.io/infovis/W04/task2.csv", draw);
             function draw(data){
                 svg.selectAll("rect").data(data).enter().append("rect")
