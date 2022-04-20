@@ -3,19 +3,33 @@
         <title>W04: Task 2</title>
     </head>
     <body>
+        <h1>神戸市の人口</h1>
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script>
+            var top_padding = 10;
             var padding = 10;
             var height = 20;
-            var svg = d3.select("body").append("svg").setAttribute("width",600).setAttribute("height",600);
+            var rect_padding = 70;
+            var svg = d3.select("body").append("svg")
+                .attr("width",1200)
+                .attr("height",400);
             d3.csv("https://tk-ohmori.github.io/infovis/W04/task2.csv", draw);
             function draw(data){
-                svg.selectAll("rect").data(data).enter().append("rect")
-                .attr("x", padding)
-                .attr("y", function(d,i){ return padding + i * ( height + padding ); })
-                .attr("width", function(d){ return d.w; })
-                .attr("height", height)
-                .style("fill", function(d){ return d.c; });
+                var g = svg.selectAll("g").data(data).enter().append("g");
+                g.append("text")
+                    .attr("x", padding)
+                    .attr("y", function(d,i){ return 15 + top_padding + i * ( height + padding ); })
+                    .text(function(d){ return d.l; });
+                g.append("rect")
+                    .attr("x", rect_padding)
+                    .attr("y", function(d,i){ return top_padding + i * ( height + padding ); })
+                    .attr("width", function(d){ return d.w; })
+                    .attr("height", height)
+                    .style("fill", function(d){ return d.c; });
+                g.append("text")
+                    .attr("x", function(d){ return parseInt(d.w) + rect_padding + 5;})
+                    .attr("y", function(d,i){ return 15 + top_padding + i * ( height + padding ); })
+                    .text(function(d){ return d.p + "人"; });
             };
         </script>
     </body>
