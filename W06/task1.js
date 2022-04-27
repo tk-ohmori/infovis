@@ -58,7 +58,7 @@ class ScatterPlot {
         .ticks(6);
 
         self.yaxis_group = self.chart.append('g')
-            .attr('transform', `translate(0, ${self.inner_width})`);
+            .attr('transform', `translate(0, 0)`);
     }
 
     update() {
@@ -84,7 +84,8 @@ class ScatterPlot {
             .append("circle")
             .attr("cx", d => self.xscale( d.x ) )
             .attr("cy", d => self.yscale( d.y ) )
-            .attr("r", d => d.r );
+            .attr("r", 10)
+            //.attr("r", d => d.r );
 
         self.xaxis_group
             .call( self.xaxis );
