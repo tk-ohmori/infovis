@@ -39,7 +39,7 @@ class ScatterPlot {
             .attr('height', self.config.height);
 
         self.chart = self.svg.append('g')
-            .attr('transform', `translate(${self.config.margin.left + self.config.margin.label}, ${self.config.margin.top + self.config.margin.label})`);
+            .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`);
 
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right - self.config.margin.label;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom - self.config.margin.label*2;
@@ -64,7 +64,7 @@ class ScatterPlot {
             .tickPadding(2);
 
         self.yaxis_group = self.chart.append('g')
-            .attr('transform', `translate(0, 0)`);
+            .attr('transform', `translate(${self.config.margin.label}, 0)`);
     }
 
     update() {
@@ -99,16 +99,16 @@ class ScatterPlot {
         self.yaxis_group
             .call( self.yaxis );
 
-        self.chart.append('text')
-            .attr('text-anchor', 'mm')
-            .attr('x', self.config.margin.label + self.config.margin.left + parseInt(self.inner_width/2))
-            .attr('y', self.config.margin.label + self.config.margin.top + self.config.margin.inner_height + parseInt(self.config.margin.label/2))
+        self.svg.append('text')
+            //.attr('text-anchor', 'mm')
+            .attr('x', parseInt(self.inner_width/2))
+            .attr('y', self.config.margin.label + self.config.margin.top + self.inner_height + parseInt(self.config.margin.label/2))
             .text(self.config.label.x)
 
-        self.chart.append('text')
+        self.svg.append('text')
             .attr('text-anchor', 'mm')
-            .attr('x', )
-            .attr('y', )
+            .attr('x', parseInt(self.config.margin.label/2))
+            .attr('y', parseInt(self.inner_height/2))
             // .attr('dy', )
             .attr('transform', 'rotate(-90)')
             .text(self.config.label.y)
