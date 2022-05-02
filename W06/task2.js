@@ -107,6 +107,8 @@ class ScatterPlot {
             .attr('text-anchor', 'middle')
             .attr('x',self.config.margin.label + self.config.margin.left + parseInt(self.inner_width/2))
             .attr('y', self.config.margin.label + self.config.margin.top + self.inner_height + self.config.margin.label + self.config.margin.bottom)
+            .attr('font-size', 'large')
+            .attr('font-weight', 'bold')
             .text(self.config.label.x)
 
         self.svg.append('text')
@@ -114,6 +116,8 @@ class ScatterPlot {
             .attr('transform', 'rotate(-90)')
             .attr('x', -(self.config.margin.label + self.config.margin.top + parseInt(self.inner_height/2)))
             .attr('y', self.config.margin.label)
+            .attr('font-size', 'large')
+            .attr('font-weight', 'bold')
             //.attr('dx', -15)
             .text(self.config.label.y)
         
