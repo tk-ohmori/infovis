@@ -62,7 +62,7 @@ class BarChart{
         
         self.yaxis_group = self.chart.append('g');
 
-        self.cahr_title = self.svg.append('text')
+        self.char_title = self.svg.append('text')
             .attr('text-anchor', 'middle')
             .attr('transform', `translate(256, 15)`)
             .text(self.config.title);
