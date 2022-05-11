@@ -66,19 +66,19 @@ class LineChart{
             .attr('transform', `translate(256, 15)`)
             .text(self.config.title);
 
-        self.area = d3.area()
+        self.area = d3.area();
     }
 
     update(){
         let self = this;
 
-        self.xscale.domain([0, d3.max(self.data, d => d.x)])
-        self.yscale.domain([0, d3.max(self.data, d => d.y)])
+        self.xscale.domain([0, d3.max(self.data, d => d.x)]);
+        self.yscale.domain([0, d3.max(self.data, d => d.y)]);
 
         self.area
             .x(d => self.xscale(d.x))
             .y1(d => self.yscale(d.y))
-            .y0(parseInt(self.yscale(0)))
+            .y0(parseInt(self.yscale(0)));
         
         self.render();
     }
@@ -101,6 +101,6 @@ class LineChart{
             .append("circle")
             .attr("cx", d => self.xscale(d.x) )
             .attr("cy", d => self.yscale(d.y) )
-            .attr("r", 5)
+            .attr("r", 5);
     }
 }

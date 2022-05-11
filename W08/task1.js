@@ -38,7 +38,7 @@ class BarChart{
             .attr('height', self.config.height);
 
         self.chart = self.svg.append('g')
-            .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`)
+            .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`);
         
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
@@ -62,7 +62,7 @@ class BarChart{
         
         self.yaxis_group = self.chart.append('g');
 
-        self.char_title = self.svg.append('text')
+        self.chart_title = self.svg.append('text')
             .attr('text-anchor', 'middle')
             .attr('transform', `translate(256, 15)`)
             .text(self.config.title);
