@@ -37,7 +37,7 @@ class LineChart{
             .attr('width', self.config.width)
             .attr('height', self.config.height);
         
-        // 以下修正
+// 以下修正
         self.chart = self.svg.append('g')
             .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`)
         
