@@ -5,7 +5,7 @@ d3.csv("https://tk-ohmori.github.io/infovis/W08/data1.csv")
         var config = {
             parent: '#drawing_region',
             width: 512,
-            height: 256,
+            height: 512,
             margin: {top:30, right:10, bottom:30, left:60},
             title: '神戸市の人口',
             label: {xaxis:'人数', yaxis:'区'}
@@ -76,7 +76,7 @@ class BarChart{
         
         self.yaxis_label = self.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(5, ${self.config.height/2})`)
+            .attr('transform', `translate(7, ${self.config.height/2})`)
             .attr('font-weight', 'bold');
     }
 
