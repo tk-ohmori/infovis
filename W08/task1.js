@@ -25,7 +25,8 @@ class BarChart{
             width: config.width || 256,
             height: config.height || 256,
             margin: config.margin || {top:10, right:10, bottom:30, left:60},
-            title: config.title || 'Chart Title'
+            title: config.title || 'Chart Title',
+            label: config.label || {xaxis:'横軸', yaxis:'縦軸'}
         }
         this.data = data;
         this.init();       
@@ -65,15 +66,18 @@ class BarChart{
 
         self.chart_title = self.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(${self.config.width/2}, ${self.config.margin.top})`);
+            .attr('transform', `translate(${self.config.width/2}, ${self.config.margin.top/2})`)
+            .attr('font-weight', 'bold');
         
         self.xaxis_label = self.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(5, ${self.config.height/2})`);
+            .attr('transform', `translate(5, ${self.config.height/2})`)
+            .attr('font-weight', 'bold');
         
         self.yaxis_label = self.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(${self.config.width/2}, ${self.config.height - 10})`);
+            .attr('transform', `translate(${self.config.width/2}, ${self.config.height - 10})`)
+            .attr('font-weight', 'bold');
     }
 
     update(){
