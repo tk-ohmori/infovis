@@ -7,7 +7,8 @@ d3.csv("https://tk-ohmori.github.io/infovis/W08/data1.csv")
             width: 512,
             height: 256,
             margin: {top:30, right:10, bottom:30, left:60},
-            title: '神戸市の人口'
+            title: '神戸市の人口',
+            label: {xaxis:'人数', yaxis:'区'}
         };
 
         const bar_chart = new BarChart( config, data );
@@ -64,8 +65,15 @@ class BarChart{
 
         self.chart_title = self.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(256, 15)`)
-            .text(self.config.title);
+            .attr('transform', `translate(${self.config.width/2}, ${self.config.margin.top})`);
+        
+        self.xaxis_label = self.svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', `translate(5, ${self.config.height/2})`);
+        
+        self.yaxis_label = self.svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', `translate(${self.config.width/2}, ${self.config.height - 10})`);
     }
 
     update(){
@@ -91,5 +99,10 @@ class BarChart{
         
         self.xaxis_group.call(self.xaxis);
         self.yaxis_group.call(self.yaxis);
+
+        self.chart_title.text(self.config.title);
+
+        self.xaxis_label.text(self.config.label.xaxis);
+        self.yaxis_label.text(self.config.label.yaxis);
     }
 }
