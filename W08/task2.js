@@ -1,29 +1,29 @@
-d3.csv("https://tk-ohmori.github.io/infovis/W08/data1.csv")
+d3.csv("https://tk-ohmori.github.io/infovis/W08/data2.csv")
     .then( data => {
-        data.forEach( d => { d.value = +d.value;});
-        
+        data.forEach( d => { d.x = +d.x; d.y = +d.y;});
+
         var config = {
             parent: '#drawing_region',
-            width: 512,
+            width: 256,
             height: 256,
-            margin: {top:30, right:10, bottom:30, left:60},
-            title: '神戸市の人口'
+            margin: {top:30, right:10, bottom:30, left:30},
+            title: 'タイトル'
         };
 
-        const bar_chart = new BarChart( config, data );
-        bar_chart.update();
+        const line_chart = new LineChart( config, data );
+        line_chart.update();
     })
     .catch( error => {
         console.log( error );
     });
 
-class BarChart{
+class LineChart{
     constructor(config, data){
         this.config = {
             parent: config.parent,
             width: config.width || 256,
             height: config.height || 256,
-            margin: config.margin || {top:10, right:10, bottom:30, left:60},
+            margin: config.margin || {top:30, right:10, bottom:30, left:30},
             title: config.title || 'Chart Title'
         }
         this.data = data;
@@ -36,7 +36,8 @@ class BarChart{
         self.svg = d3.select(self.config.parent)
             .attr('width', self.config.width)
             .attr('height', self.config.height);
-
+        
+        // 以下修正
         self.chart = self.svg.append('g')
             .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`)
         
