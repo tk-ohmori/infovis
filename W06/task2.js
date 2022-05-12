@@ -27,7 +27,7 @@ class ScatterPlot {
             height: config.height || 256,
             margin: config.margin || {top:10, right:10, bottom:10, left:10, xaxis:10, yaxis:10},
             label: config.label || {x:'xLabelName', y:'yLabelName'},
-            title: config.title || "chartTitle"
+            title: config.title || 'chartTitle'
         }
         this.data = data;
         this.init();
@@ -88,14 +88,13 @@ class ScatterPlot {
     render() {
         let self = this;
 
-        self.chart.selectAll("circle")
+        self.chart.selectAll('circle')
             .data(self.data)
             .enter()
-            .append("circle")
-            .attr("cx", d => self.xscale( d.x ) + self.config.margin.label )
-            .attr("cy", d => self.yscale( d.y ) + self.config.margin.label )
-            .attr("r", 5)
-            //.attr("r", d => d.r );
+            .append('circle')
+            .attr('cx', d => self.xscale( d.x ) + self.config.margin.label )
+            .attr('cy', d => self.yscale( d.y ) + self.config.margin.label )
+            .attr('r', 5)
 
         self.xaxis_group
             .call( self.xaxis );

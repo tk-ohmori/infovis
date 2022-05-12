@@ -5,8 +5,8 @@ d3.csv("https://tk-ohmori.github.io/infovis/W08/data1.csv")
         var config = {
             parent: '#drawing_region',
             width: 512,
-            height: 512,
-            margin: {top:30, right:10, bottom:30, left:60},
+            height: 256,
+            margin: {top:30, right:10, bottom:50, left:60},
             title: '神戸市の人口',
             label: {xaxis:'人数', yaxis:'区'}
         };
@@ -92,14 +92,14 @@ class BarChart{
     render(){
         let self = this;
 
-        self.chart.selectAll("rect")
+        self.chart.selectAll('rect')
             .data(self.data)
             .enter()
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", d => self.yscale(d.label))
-            .attr("width", d => self.xscale(d.value))
-            .attr("height", self.yscale.bandwidth());
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', d => self.yscale(d.label))
+            .attr('width', d => self.xscale(d.value))
+            .attr('height', self.yscale.bandwidth())
         
         self.xaxis_group.call(self.xaxis);
         self.yaxis_group.call(self.yaxis);

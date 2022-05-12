@@ -57,8 +57,12 @@ class PieChart{
             .outerRadius(self.radius);
 
         self.text = d3.arc()
-            .innerRadius(self.radius*2/3)
-            .outerRadius(self.radius*2/3);
+            .innerRadius(self.radius*3/4)
+            .outerRadius(self.radius*3/4);
+        
+        self.ratio = d3.arc()
+            .innerRadius(self.radius/2)
+            .outerRadius(self.radius/2);
         
         self.color = ['indianred', 'cornflowerblue', 'springgreen', 'coral', 'mediumpurple', 'sandybrown', 'lightpink', 'steelblue', 'seagreen'];
     }
@@ -67,6 +71,8 @@ class PieChart{
         let self = this;
 
         self.pie.value(d => d.value);
+
+        self.value_sum = d3.sum( self.data, d => d.value);
 
         self.render();
     }
@@ -85,10 +91,17 @@ class PieChart{
             .style('stroke-width', '2px');
 
         self.chart_pie.append('text')
-            .attr('fill','black')
+            .attr('fill', 'black')
             .attr('transform', d => `translate(${self.text.centroid(d)})`)
-            .attr('dy', '3px')
             .attr('text-anchor', 'middle')
-            .text(d => d.data.label);
+            .attr('font-weight', 'bold')
+            .attr('font-size', '20px')
+            .text(d => d.data.label + '');
+
+        self.chart_pie.append('text')
+            .attr('fill', 'black')
+            .attr('transform', d => `translate(${self.ratio.centroid(d)})`)
+            .attr('text-anchor', 'middle')
+            .text(d => (d.value*100/self.value_sum).toFixed([1]) + '%');
     }
 }
