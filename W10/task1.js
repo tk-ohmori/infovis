@@ -1,7 +1,6 @@
 d3.csv("https://tk-ohmori.github.io/infovis/W10/task1.csv")
     .then( data => {
-        data.forEach( d => { d.value = +d.value;});
-        data.forEach( d => { d.area = +d.area;});
+        data.forEach( d => { d.value = +d.value; d.area = +d.area;});
         
         var config = {
             parent: '#drawing_region',
