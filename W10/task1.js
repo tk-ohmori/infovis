@@ -88,22 +88,34 @@ class AnimatedBarChart{
                 self.update();
             });
         
-        d3.select('#descend')
+        d3.select('#reset')
+                .on('click', d => {
+                    self.update(true);
+                    self.data = self.original_data.concat();
+                    self.update();
+                });
+        
+        d3.select('#pop_descend')
             .on('click', d => {
                 self.data.sort((a, b) => b.value - a.value);
                 self.update();
             });
             
-        d3.select('#ascend')
+        d3.select('#pop_ascend')
             .on('click', d => {
                 self.data.sort((a, b) => a.value - b.value);
                 self.update();
             });
         
-        d3.select('#reset')
+        d3.select('#area_descend')
             .on('click', d => {
-                self.update(true);
-                self.data = self.original_data.concat();
+                self.data.sort((a, b) => b.area - a.area);
+                self.update();
+            });
+            
+        d3.select('#area_ascend')
+            .on('click', d => {
+                self.data.sort((a, b) => a.area - b.area);
                 self.update();
             });
 
@@ -113,6 +125,9 @@ class AnimatedBarChart{
 
     update(flag = false){
         let self = this;
+
+        self.sum_of_pop = d3.sum(self.data, d => d.value);
+        self.sum_of_area = d3.sum(self.data, d => d.area);
 
         self.xscale.domain([0, d3.max(self.data, d => d.value)]);
         self.yscale.domain(self.data.map(d => d.label));
@@ -141,8 +156,8 @@ class AnimatedBarChart{
             .on('mouseover', (e,d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
-                    .html(`<div class="tooltip-label">人口</div>${d.value.toLocaleString()}人`);
-                e.target.style.fill = '#333';
+                    .html('<div class="tooltip-label">詳しく見る</div>');
+                e.target.style.fill = '#444';
             })
             .on('mousemove', (e) => {
                 const padding = 10;
@@ -158,10 +173,12 @@ class AnimatedBarChart{
             .on('click', (e,d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
-                    .html(`<div class="tooltip-label">人口・面積・人口密度</div>
+                    .html(`<div class="tooltip-label">${d.label}</div>
                     人口：${d.value.toLocaleString()}人<br>
+                    人口割合：${(100*d.value/self.sum_of_pop).toFixed(2)}%<br>
                     面積：${d.area}km^2<br>
-                    人口密度：${(100*d.value/d.area).toFixed(2)}%`);
+                    面積割合：${(100*d.area/self.sum_of_area).toFixed(2)}%<br>
+                    人口密度：${(d.value/d.area).toFixed(2)}人/km^2`);
             });
 
         self.xaxis_group.call(self.xaxis);
