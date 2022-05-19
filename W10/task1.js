@@ -88,11 +88,11 @@ class AnimatedBarChart{
             });
         
         d3.select('#reset')
-                .on('click', d => {
-                    self.update(true);
-                    self.data = self.original_data.concat();
-                    self.update();
-                });
+            .on('click', d => {
+                self.update(true);
+                self.data = self.original_data.concat();
+                self.update();
+            });
         
         d3.select('#pop_descend')
             .on('click', d => {

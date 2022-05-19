@@ -1,11 +1,11 @@
 d3.csv("https://tk-ohmori.github.io/infovis/W10/task2.csv")
     .then( data => {
-        data.forEach( d => { d.x = +d.x; d.y = +d.y; });
+        data.forEach( d => { d.x = +d.x; d.y = +d.y; d.selected = false;});
 
         var config = {
             parent: '#drawing_region',
-            width: 256,
-            height: 256,
+            width: 512,
+            height: 512,
             margin: {top:10, right:10, bottom:20, left:30, xaxis:10, yaxis:10, label:20},
             label: {x:'X-label', y:'Y-label'},
             title: "Chart Title"
@@ -36,6 +36,8 @@ class ScatterPlotWithTooltip {
     init() {
         let self = this;
 
+        self.original_data = self.data.concat();
+
         self.svg = d3.select( self.config.parent )
             .attr('width', self.config.width)
             .attr('height', self.config.height);
@@ -51,7 +53,7 @@ class ScatterPlotWithTooltip {
 
         self.yscale = d3.scaleLinear()
             .range( [0, self.inner_height] );
-
+                    
         self.xaxis = d3.axisBottom( self.xscale )
             .ticks(5)
             .tickSize(10)
@@ -67,6 +69,35 @@ class ScatterPlotWithTooltip {
 
         self.yaxis_group = self.chart.append('g')
             .attr('transform', `translate(${self.config.margin.label}, ${self.config.margin.label})`);
+    
+        d3.select('#add')
+            .on('click', d => {
+                self.data.push({x: +document.getElementById('add_x').value, y: +document.getElementById('add_y').value, selected: false});
+                document.getElementById('add_x').value = '';
+                document.getElementById('add_y').value = '';
+                self.update();
+            });
+
+        d3.select('#delete')
+            .on('click', d => {
+                self.data = (self.data.filter(d => !d.selected));
+                self.update();
+            });
+
+        d3.select('#clear')
+            .on('click', d => {
+                self.data = [];
+                self.update();
+            });
+
+        d3.select('#reset')
+            .on('click', d => {
+                self.data = self.original_data.concat();
+                self.data.forEach( d => {d.selected = false;});
+                self.update();
+            });
+
+        self.init_render();
     }
 
     update() {
@@ -90,19 +121,21 @@ class ScatterPlotWithTooltip {
 
         self.circles = self.chart.selectAll('circle')
             .data(self.data)
-            .enter()
-            .append('circle')
+            .join('circle')
 
         self.circles
             .attr('cx', d => self.xscale( d.x ) + self.config.margin.label )
             .attr('cy', d => self.yscale( d.y ) + self.config.margin.label )
-            .attr('r', 5)
+            .attr('r', 10)
+            .style('fill', '');
+
         self.circles
             .on('mouseover', (e,d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
                     .html(`<div class="tooltip-label">Position</div>(${d.x}, ${d.y})`);
-                e.target.style.fill = '#444';
+                if(d.selected) e.target.style.fill = '#aa0000';
+                else e.target.style.fill = '#666';
             })
             .on('mousemove', (e) => {
                 const padding = 10;
@@ -110,10 +143,20 @@ class ScatterPlotWithTooltip {
                     .style('left', (e.pageX + padding) + 'px')
                     .style('top', (e.pageY + padding) + 'px');
             })
-            .on('mouseleave', () => {
+            .on('mouseleave', (e, d) => {
                 d3.select('#tooltip')
                     .style('opacity', 0);
-                e.target.style.fill = '';
+                if(d.selected) e.target.style.fill = 'red';
+                else e.target.style.fill = '';
+            })
+            .on('click', (e,d) => {
+                if(d.selected){
+                    d.selected = false;
+                    e.target.style.fill = ''
+                }else{
+                    d.selected = true;
+                    e.target.style.fill = 'red';
+                }
             });
 
         self.xaxis_group
@@ -121,6 +164,12 @@ class ScatterPlotWithTooltip {
         
         self.yaxis_group
             .call( self.yaxis );
+
+
+    }
+
+    init_render(){
+        let self = this;
 
         self.svg.append('text')
             .attr('text-anchor', 'middle')
@@ -137,7 +186,6 @@ class ScatterPlotWithTooltip {
             .attr('y', self.config.margin.label)
             .attr('font-size', 'large')
             .attr('font-weight', 'bold')
-            //.attr('dx', -15)
             .text(self.config.label.y)
         
         self.svg.append('text')
