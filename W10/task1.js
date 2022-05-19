@@ -11,8 +11,8 @@ d3.csv("https://tk-ohmori.github.io/infovis/W10/task1.csv")
             label: {xaxis:'人数', yaxis:'区'}
         };
 
-        const animmated_bar_chart = new AnimatedBarChart( config, data );
-        bar_chart.update();
+        const animated_bar_chart = new AnimatedBarChart( config, data );
+        animated_bar_chart.update();
     })
     .catch( error => {
         console.log( error );
@@ -34,6 +34,8 @@ class AnimatedBarChart{
 
     init(){
         let self = this;
+
+        self.original_data = self.data.concat();
 
         self.svg = d3.select(self.config.parent)
             .attr('width', self.config.width)
@@ -78,29 +80,82 @@ class AnimatedBarChart{
             .attr('text-anchor', 'middle')
             .attr('transform', `translate(7, ${self.config.height/2})`)
             .attr('font-weight', 'bold');
+        
+        d3.select('#reverse')
+            .on('click', d => {
+                self.data.reverse();
+                self.update();
+            });
+        
+        d3.select('#descend')
+            .on('click', d => {
+                self.data.sort((a, b) => b.value - a.value);
+                self.update();
+            });
+            
+        d3.select('#ascend')
+            .on('click', d => {
+                self.data.sort((a, b) => a.value - b.value);
+                self.update();
+            });
+        
+        d3.select('#reset')
+            .on('click', d => {
+                self.update(true);
+                self.data = self.original_data.concat();
+                self.update();
+            });
+
+        self.update(true);
+
     }
 
-    update(){
+    update(flag = false){
         let self = this;
 
         self.xscale.domain([0, d3.max(self.data, d => d.value)]);
         self.yscale.domain(self.data.map(d => d.label));
 
-        self.render();
+        self.render(flag);
     }
 
-    render(){
+    render(flag){
         let self = this;
 
-        self.chart.selectAll('rect')
+        self.rects = self.chart.selectAll('rect')
             .data(self.data)
-            .enter()
-            .append('rect')
+            .join('rect')
+            
+        self.rects
+            .transition()
+            .duration(flag?0:1000)
             .attr('x', 0)
             .attr('y', d => self.yscale(d.label))
-            .attr('width', d => self.xscale(d.value))
+            .attr('width', d => flag?0:self.xscale(d.value))
             .attr('height', self.yscale.bandwidth())
-        
+
+        self.rects
+            .on('mouseover', (e,d) => {
+                d3.select('#tooltip')
+                    .style('opacity', 1)
+                    .html(`<div class="tooltip-label">人口</div>${d.value.toLocaleString()}人`);
+                // e.target.attr('fill', '#AAA')
+                    // e.target.style.fill = '#AAA';
+                // e.target.transition()
+                // .duration(1000)
+                // .style.fill = '';
+            })
+            .on('mousemove', (e) => {
+                const padding = 10;
+                d3.select('#tooltip')
+                    .style('left', (e.pageX + padding) + 'px')
+                    .style('top', (e.pageY + padding) + 'px');
+            })
+            .on('mouseleave', () => {
+                d3.select('#tooltip')
+                    .style('opacity', 0);
+            });
+
         self.xaxis_group.call(self.xaxis);
         self.yaxis_group.call(self.yaxis);
 
