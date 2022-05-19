@@ -1,6 +1,7 @@
 d3.csv("https://tk-ohmori.github.io/infovis/W10/task1.csv")
     .then( data => {
         data.forEach( d => { d.value = +d.value;});
+        data.forEach( d => { d.area = +d.area;});
         
         var config = {
             parent: '#drawing_region',
@@ -122,9 +123,11 @@ class AnimatedBarChart{
     render(flag){
         let self = this;
 
+ 
+
         self.rects = self.chart.selectAll('rect')
-            .data(self.data)
-            .join('rect')
+        .data(self.data)
+        .join('rect');
             
         self.rects
             .transition()
@@ -132,18 +135,14 @@ class AnimatedBarChart{
             .attr('x', 0)
             .attr('y', d => self.yscale(d.label))
             .attr('width', d => flag?0:self.xscale(d.value))
-            .attr('height', self.yscale.bandwidth())
+            .attr('height', self.yscale.bandwidth());
 
         self.rects
             .on('mouseover', (e,d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
                     .html(`<div class="tooltip-label">人口</div>${d.value.toLocaleString()}人`);
-                // e.target.attr('fill', '#AAA')
-                    // e.target.style.fill = '#AAA';
-                // e.target.transition()
-                // .duration(1000)
-                // .style.fill = '';
+                e.target.style.fill = '#333';
             })
             .on('mousemove', (e) => {
                 const padding = 10;
@@ -151,9 +150,18 @@ class AnimatedBarChart{
                     .style('left', (e.pageX + padding) + 'px')
                     .style('top', (e.pageY + padding) + 'px');
             })
-            .on('mouseleave', () => {
+            .on('mouseleave', (e) => {
                 d3.select('#tooltip')
                     .style('opacity', 0);
+                e.target.style.fill = '';
+            })
+            .on('click', (e,d) => {
+                d3.select('#tooltip')
+                    .style('opacity', 1)
+                    .html(`<div class="tooltip-label">人口・面積・人口密度</div>
+                    人口：${d.value.toLocaleString()}人<br>
+                    面積：${d.area}km^2<br>
+                    人口密度：${(100*d.value/d.area).toFixed(2)}%`);
             });
 
         self.xaxis_group.call(self.xaxis);
