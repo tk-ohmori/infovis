@@ -4,7 +4,11 @@ def main():
     for l in org.readlines():
         l = l.split(',')
         country = l[0].replace('"', '')
-        gdp = l[-3].replace('"', '')
+        i = -3
+        gdp = ''
+        while(gdp == ''):
+            gdp = l[i].replace('"', '')
+            i -= 1
         out.write(country + ',' + gdp + '\n')
     out.close()
 
