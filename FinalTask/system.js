@@ -15,7 +15,7 @@ const path = d3.geoPath()
     .projection(projection);
 
 const g = svg.append("g");
-d3.json("https://tk-ohmori.github.io/infovis/FinalTask/dataworld-countries.geo.json").then(function(data) {
+d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/world-countries.geo.json").then(function(data) {
     g.selectAll("path")
         .data(topojson.feature(data, data.objects.countries).features)
         .enter()
