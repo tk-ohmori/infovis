@@ -7,15 +7,16 @@ const svg = d3.select("body")
   .attr("height",height);
 
 const projection = d3.geoMercator()
-    .center([0,0])
-    .translate([width/2, height/2])
-    .scale(130);
+    .center([0, 5 ])
+    .scale(150)
+    .rotate([-180,0]);
 
-const path = d3.geoPath(projection);
+const path = d3.geoPath()
+    .projection(projection);
 
+const g = svg.append("g");
 d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/countries.geo.json").then(function(data) {
-    svg.append("g")
-        .selectAll("path")
+    g.selectAll("path")
         .data(data.features)
         .enter()
         .append("path")
