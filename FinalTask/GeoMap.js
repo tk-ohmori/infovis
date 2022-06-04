@@ -28,11 +28,14 @@ class GeoMap{
         this.map = this.svg.append('g');
 
         this.gdpScale = d3.scaleLinear()
-            .range([0,1]);
+            .range([1,0]);
 
         this.gdpColorScale = d3.interpolateYlOrRd;
 
-        this.isGDP = true;
+        this.OSColor = ['crimson', 'darkblue', 'darkgreen', 'chocolate', 'indigo','white'];
+        // this.OSColor = {'Android':'crimson', 'iOS':'darkblue', 'Samsung':'darkgreen', 'KaiOS':'chocolate', 'Windows':'indigo','Others':'white'};
+
+        this.isGDP = false;
 
         this.update();
     }
@@ -51,15 +54,15 @@ class GeoMap{
             .attr('d', this.path)
             .attr('stroke', 'dimgray')
             .attr('stroke-width', 0.5)
-            .attr('fill', d => {console.log(d.properties.name + ':' + getGDP(d.properties.name));this.gdpColorScale(this.gdpScale(getGDP(d.properties.name)))})
+            .attr('fill', d => this.isGDP ? (getGDP(d.properties.name)=='N/A' ? 'white' : this.gdpColorScale(this.gdpScale(getGDP(d.properties.name)))) : (getTopOS(d.properties.name)=='N/A' ? 'white' : this.OSColor[getTopOS(d.properties.name)]))
             .on('mouseover', (e, d) => {
                 e.target.setAttribute('fill', 'white')
             })
             .on('mouseleave', (e, d) => {
-                e.target.setAttribute('fill', 'lightgray')
+                e.target.setAttribute('fill', getGDP(d.properties.name)=='N/A' ? 'white' : this.gdpColorScale(this.gdpScale(getGDP(d.properties.name))))
             })
             .on('click', (e, d) => {
-                if(d.properties.name!='Antarctica') console.log(d.properties.name)
+                if(d.properties.name!='Antarctica') console.log(d.properties.name + ':' + getGDP(d.properties.name))
             });
     }
 }

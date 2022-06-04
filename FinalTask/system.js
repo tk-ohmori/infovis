@@ -53,10 +53,21 @@ var country_list = {
 
 function getGDP(country) {
     if(country in country_list) country = country_list[country];
+    country = country.replaceAll(' ','-');
     result = bar_chart.data.find(d => d.Country == country);
-    if(result==undefined) return 0;
+    if(result==undefined) return 'N/A';
+    else return result.GDP_per_capita;
+}
+
+function getTopOS(country){
+    if(country in country_list) country = country_list[country];
+    country = country.replaceAll(' ','-');
+    result = bar_chart.data.find(d => d.Country == country);
+    if(result==undefined) return 'N/A';
     else {
-        console.log(result)
-        return result.GDP_per_capita;
+        var os_list = ['Android','iOS','Samsung','KaiOS','Windows','Others'];
+        var ary = [+result.Android, +result.iOS, +result.Samsung, +result.KaiOS, +result.Others];
+        return ary.indexOf(Math.max(ary))
+        // return os_list[ary.indexOf(Math.max(ary))]
     }
 }
