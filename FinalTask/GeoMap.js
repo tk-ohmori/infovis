@@ -27,12 +27,21 @@ class GeoMap{
         
         this.map = this.svg.append('g');
 
+        this.gdpScale = d3.scaleLinear()
+            .range([0,1]);
+
+        this.gdpColorScale = d3.interpolateYlOrRd;
+
+        this.isGDP = true;
+
         this.update();
     }
 
     update(){
+        this.gdpScale.domain([bar_chart.gdp_min, bar_chart.gdp_max]);
+   
         this.render();
-    }
+ }
 
     render(){
         this.map.selectAll('path')
@@ -42,7 +51,7 @@ class GeoMap{
             .attr('d', this.path)
             .attr('stroke', 'dimgray')
             .attr('stroke-width', 0.5)
-            .attr('fill', 'lightgray')
+            .attr('fill', d => {console.log(d.properties.name + ':' + getGDP(d.properties.name));this.gdpColorScale(this.gdpScale(getGDP(d.properties.name)))})
             .on('mouseover', (e, d) => {
                 e.target.setAttribute('fill', 'white')
             })

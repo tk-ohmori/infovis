@@ -27,7 +27,7 @@ def main():
     country_list = [l.replace('\n','') for l in f.readlines()]
     f.close()
     output = open('finaltask.csv', 'w', encoding='utf-8')
-    output.write('Country,Population,GDP,Android,iOS,Samsung,KaiOS,Windows,Others\n')
+    output.write('Country,Population,GDP_per_capita,Android,iOS,Samsung,KaiOS,Windows,Others\n')
     for country in country_list:
         country = dic.get(country, country).replace(' ','-')
         if country == 'Antarctica':
@@ -79,7 +79,7 @@ def get_pop_gdp(country):
     if pop == '':
         print(country + "'s population was not found.")
         exit(1)
-    return gdp, pop
+    return pop, '{:.2f}'.format(float(gdp)/float(pop))
 
 
 

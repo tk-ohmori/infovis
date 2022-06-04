@@ -1,8 +1,21 @@
-let selected = ['Japan', 'United States of America', 'China', 'South Korea', 'United Kingdom']
+let selected = ['Japan', 'United-States-of-America', 'China', 'Republic-of-Korea', 'United-Kingdom']
+let bar_chart;
+let geo_map;
+
+d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask.csv')
+    .then(function(data) {
+        bar_chart = new BarChart({
+            parent: '#bar_region',
+            width: 600,
+            height: 400,
+            margin: {top:10, right:40, bottom:30, left:40}
+        }, data);
+        bar_chart.update();
+    });
 
 d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/world-110m2.geo.json")
     .then(function(data) {
-        var geo_map = new GeoMap({
+        geo_map = new GeoMap({
             parent: '#map_region',
             width: 600,
             height: 450,
@@ -12,43 +25,38 @@ d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/world-110m2.geo.json
         geo_map.update();
     });
 
+function Sync() {
+    bar_chart.data = bar_chart.data.filter(d => selected.includes(d.country))
+}
 
-/////////
+var country_list = {
+    'Bosnia and Herz.':'Bosnia-and-Herzegovina',
+    'Brunei':'Brunei-Darussalam',
+    'Central African Rep.':'Central-African-Republic',
+    'Czechia':'Czech-Republic',
+    'Dem. Rep. Congo':'Democratic-Republic-of-the-Congo',
+    'Dominican Rep.':'Dominican-Republic',
+    'Eq. Guinea':'Equatorial-Guinea',
+    'Laos':"Lao-People's-Democratic-Republic",
+    'Macedonia':'North-Macedonia',
+    'Moldova':'Republic-of-Moldova',
+    'N. Cyprus':'Cyprus',
+    'Palestine':'State-of-Palestine',
+    'Russia':'Russian-Federation',
+    'S. Sudan':'South-Sudan',
+    'Solomon Is.':'Solomon-Islands',
+    'South Korea':'Republic-of-Korea',
+    'Syria':'Syrian-Arab-Republic',
+    'Tanzania':'United-Republic-of-Tanzania',
+    'Vietnam':'Viet-Nam'
+}
 
-// const width = 900;
-// const height = 500;
-
-// const svg = d3.select("body")
-//   .append("svg")
-//   .attr("width",width)
-//   .attr("height",height);
-
-// const projection = d3.geoMercator()
-//     .center([10, 5])
-//     .scale(130)
-//     .rotate([-135,-10]);
-
-// const path = d3.geoPath()
-//     .projection(projection);
-
-// const g = svg.append("g");
-// d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/world-110m2.geo.json").then(function(data) {
-//     g.selectAll("path")
-//         .data(topojson.feature(data, data.objects.countries).features)
-//         .enter()
-//         .append("path")
-//         .attr("d",path)
-//         .attr("stroke", "dimgray")
-//         .attr("stroke-width",0.5)
-//         .attr("fill","lightgray")
-//         .on('mouseover', (e, d) => {
-//             if(d.properties.name != 'Bermuda') e.target.setAttribute('fill', 'white')
-//         })
-//         .on('mouseleave', (e, d) => {
-//             e.target.setAttribute('fill', 'lightgray')
-//         })
-//         .on('click', (e, d) => {
-//             console.log(d.properties.name)
-//         })
-// })
-
+function getGDP(country) {
+    if(country in country_list) country = country_list[country];
+    result = bar_chart.data.find(d => d.Country == country);
+    if(result==undefined) return 0;
+    else {
+        console.log(result)
+        return result.GDP_per_capita;
+    }
+}
