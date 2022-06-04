@@ -32,10 +32,42 @@ class GeoMap{
 
         this.gdpColorScale = d3.interpolateYlOrRd;
 
-        this.OSColor = ['crimson', 'darkblue', 'darkgreen', 'chocolate', 'indigo','white'];
-        // this.OSColor = {'Android':'crimson', 'iOS':'darkblue', 'Samsung':'darkgreen', 'KaiOS':'chocolate', 'Windows':'indigo','Others':'white'};
+        // this.OSColor = ['crimson', 'darkblue', 'darkgreen', 'chocolate', 'indigo','white'];
+        this.OSColor = {'Android':'mediumvioletred', 'iOS':'dodgerblue', 'Samsung':'lightgreen', 'KaiOS':'peachpuff', 'Windows':'iturquoise','Others':'white'};
 
-        this.isGDP = false;
+        this.isGDP = true;
+
+        this.strokeColor = function(name){
+            if(selected.includes(trsName(name))) return 'green';
+            else return 'dimgray';
+        }
+
+        this.strokeWidth = function(name){
+            if(selected.includes(trsName(name))) return 1.5;
+            else return 0.5;
+        }
+
+        this.fillColor = function(name){
+            if(this.isGDP){
+                if(getGDP(name)=='N/A') return 'white';
+                else return this.gdpColorScale(this.gdpScale(getGDP(name)));
+            }else{
+                if(getTopOS(name)=='N/A') return 'white';
+                else return this.OSColor[getTopOS(name)];
+            }
+        };
+
+        d3.select('#GDP')
+            .on('click', d => {
+                this.isGDP = true;
+                this.update();
+            });
+        
+        d3.select('#TopOS')
+            .on('click', d => {
+                this.isGDP = false;
+                this.update();
+            });
 
         this.update();
     }
@@ -44,25 +76,35 @@ class GeoMap{
         this.gdpScale.domain([bar_chart.gdp_min, bar_chart.gdp_max]);
    
         this.render();
- }
+    }
 
     render(){
-        this.map.selectAll('path')
-            .data(topojson.feature(this.data, this.data.objects.countries).features)
+        this.paths = this.map.selectAll('path')
+            .data(topojson.feature(this.data, this.data.objects.countries).features);
+        
+        this.paths.exit().remove();
+
+        this.paths
             .enter()
             .append('path')
+            .merge(this.paths)
             .attr('d', this.path)
-            .attr('stroke', 'dimgray')
-            .attr('stroke-width', 0.5)
-            .attr('fill', d => this.isGDP ? (getGDP(d.properties.name)=='N/A' ? 'white' : this.gdpColorScale(this.gdpScale(getGDP(d.properties.name)))) : (getTopOS(d.properties.name)=='N/A' ? 'white' : this.OSColor[getTopOS(d.properties.name)]))
+            .attr('stroke', d => this.strokeColor(d.properties.name))
+            .attr('stroke-width', d => this.strokeWidth(d.properties.name))
+            .attr('fill', d => this.fillColor(d.properties.name))
             .on('mouseover', (e, d) => {
-                e.target.setAttribute('fill', 'white')
+                e.target.setAttribute('fill', 'white');
             })
             .on('mouseleave', (e, d) => {
-                e.target.setAttribute('fill', getGDP(d.properties.name)=='N/A' ? 'white' : this.gdpColorScale(this.gdpScale(getGDP(d.properties.name))))
+                e.target.setAttribute('fill', this.fillColor(d.properties.name));
             })
             .on('click', (e, d) => {
-                if(d.properties.name!='Antarctica') console.log(d.properties.name + ':' + getGDP(d.properties.name))
+                var c_name = trsName(d.properties.name);
+                if(selected.includes(c_name)) selected = selected.filter(s => s!=c_name);
+                else selected.push(c_name);
+                this.render();
+                bar_chart.update();
+                
             });
     }
 }

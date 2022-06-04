@@ -25,10 +25,6 @@ d3.json("https://tk-ohmori.github.io/infovis/FinalTask/data/world-110m2.geo.json
         geo_map.update();
     });
 
-function Sync() {
-    bar_chart.data = bar_chart.data.filter(d => selected.includes(d.country))
-}
-
 var country_list = {
     'Bosnia and Herz.':'Bosnia-and-Herzegovina',
     'Brunei':'Brunei-Darussalam',
@@ -51,23 +47,26 @@ var country_list = {
     'Vietnam':'Viet-Nam'
 }
 
+function trsName(name){
+    if(name in country_list) name = country_list[name];
+    name = name.replaceAll(' ','-');
+    return name;
+}
+
 function getGDP(country) {
-    if(country in country_list) country = country_list[country];
-    country = country.replaceAll(' ','-');
+    country = trsName(country);
     result = bar_chart.data.find(d => d.Country == country);
     if(result==undefined) return 'N/A';
     else return result.GDP_per_capita;
 }
 
 function getTopOS(country){
-    if(country in country_list) country = country_list[country];
-    country = country.replaceAll(' ','-');
+    country = trsName(country);
     result = bar_chart.data.find(d => d.Country == country);
     if(result==undefined) return 'N/A';
     else {
         var os_list = ['Android','iOS','Samsung','KaiOS','Windows','Others'];
         var ary = [+result.Android, +result.iOS, +result.Samsung, +result.KaiOS, +result.Others];
-        return ary.indexOf(Math.max(ary))
-        // return os_list[ary.indexOf(Math.max(ary))]
+        return os_list[ary.indexOf(Math.max(...ary))]
     }
 }
