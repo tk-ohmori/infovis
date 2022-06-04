@@ -1,20 +1,47 @@
-import glob
 import os
 
+dic = {
+    'Bosnia and Herz.':'Bosnia-and-Herzegovina',
+    'Brunei':'Brunei-Darussalam',
+    'Central African Rep.':'Central-African-Republic',
+    'Czechia':'Czech-Republic',
+    'Dem. Rep. Congo':'Democratic-Republic-of-the-Congo',
+    'Dominican Rep.':'Dominican-Republic',
+    'Eq. Guinea':'Equatorial-Guinea',
+    'Laos':"Lao-People's-Democratic-Republic",
+    'Macedonia':'North-Macedonia',
+    'Moldova':'Republic-of-Moldova',
+    'N. Cyprus':'Cyprus',
+    'Palestine':'State-of-Palestine',
+    'Russia':'Russian-Federation',
+    'S. Sudan':'South-Sudan',
+    'Solomon Is.':'Solomon-Islands',
+    'South Korea':'Republic-of-Korea',
+    'Syria':'Syrian-Arab-Republic',
+    'Tanzania':'United-Republic-of-Tanzania',
+    'Vietnam':'Viet-Nam'
+}
+
 def main():
-    files = glob.glob('os_share/*.csv')
-    output = open('finaltask.csv', 'w')
-    for f in files:
-        os_share = get_data(f)
-        country = os.path.basename(f).replace('.csv','').replace('-',' ')
+    f = open('country_list.csv', 'r', encoding='utf-8')
+    country_list = [l.replace('\n','') for l in f.readlines()]
+    f.close()
+    output = open('finaltask.csv', 'w', encoding='utf-8')
+    output.write('Country,Population,GDP,Android,iOS,Samsung,KaiOS,Windows,Others\n')
+    for country in country_list:
+        country = dic.get(country, country).replace(' ','-')
+        if country == 'Antarctica':
+            continue
+        os_share = get_data(country)
         (population, gdp) = get_pop_gdp(country)
         output.write(','.join([country, population, gdp] + os_share) + '\n')
     output.close()
 
-def get_data(file_name):
+def get_data(country):
+    file_name = 'os_share/' + country + '.csv'
     os_list = ['Android', 'iOS', 'Samsung', 'KaiOS', 'Windows', 'Others']
     try:
-        f = open(file_name, 'r')
+        f = open(file_name, 'r', encoding='utf-8')
     except OSError as e:
         print(e)
         print(file_name)
@@ -32,7 +59,7 @@ def get_data(file_name):
                 
 
 def get_pop_gdp(country):
-    gdp_file = open('gdp_2020.csv', 'r')
+    gdp_file = open('gdp_2020.csv', 'r', encoding='utf-8')
     gdp = ''
     for l in gdp_file.readlines():
         if l.startswith(country):
@@ -42,7 +69,7 @@ def get_pop_gdp(country):
     if gdp == '':
         print(country + "'s GDP was not found.")
         exit(1)
-    pop_file = open('population_2020.csv', 'r')
+    pop_file = open('population_2020.csv', 'r', encoding='utf-8')
     pop = ''
     for l in pop_file.readlines():
         if l.startswith(country):

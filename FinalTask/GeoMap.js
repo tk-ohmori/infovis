@@ -50,7 +50,7 @@ class GeoMap{
                 e.target.setAttribute('fill', 'lightgray')
             })
             .on('click', (e, d) => {
-                console.log(d.properties.name)
+                if(d.properties.name!='Antarctica') console.log(d.properties.name)
             });
     }
 }

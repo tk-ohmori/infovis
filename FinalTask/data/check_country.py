@@ -10,15 +10,54 @@ f1.close()
 f2.close()
 f3.close()
 
-for i in range(max([len(lines1), len(lines2), len(lines3)])):
+import glob
+import os
+files = glob.glob('os_share/*.csv')
+files = [os.path.basename(f).replace('.csv','') for f in files]
+
+dic = {
+    'Bosnia and Herz.':'Bosnia-and-Herzegovina',
+    'Brunei':'Brunei-Darussalam',
+    'Central African Rep.':'Central-African-Republic',
+    'Czechia':'Czech-Republic',
+    'Dem. Rep. Congo':'Democratic-Republic-of-the-Congo',
+    'Dominican Rep.':'Dominican-Republic',
+    'Eq. Guinea':'Equatorial-Guinea',
+    'Laos':"Lao-People's-Democratic-Republic",
+    'Macedonia':'North-Macedonia',
+    'Moldova':'Republic-of-Moldova',
+    'N. Cyprus':'Cyprus',
+    'Palestine':'State-of-Palestine',
+    'Russia':'Russian-Federation',
+    'S. Sudan':'South-Sudan',
+    'Solomon Is.':'Solomon-Islands',
+    'South Korea':'Republic-of-Korea',
+    'Syria':'Syrian-Arab-Republic',
+    'Tanzania':'United-Republic-of-Tanzania',
+    'Vietnam':'Viet-Nam'
+}
+
+def check(lines, country):
+    country = dic.get(country, country).replace(' ','-')
+    if country == 'Antarctica':
+        return True
+    for l in lines:
+        if l.split(',')[0]==country:
+            return True
+    return False
+
+for i in range(min([len(lines1), len(lines2), len(lines3)])):
     flag = False
-    if lines1[i].replace('\n','') != lines2[i].split(',')[0]:
-        print("GDP's line: " + str(i+1))
-        print(lines1[i].replace('\n',''))
+    country = lines1[i].replace('\n','')
+    if not check(lines2, country):
+        print("GDP: " + country)
         flag = True
-    if lines1[i].replace('\n','') != lines3[i].split(',')[0]:
-        print("Population's line: " + str(i+1))
-        print(lines1[i].replace('\n',''))
+    if not check(lines3, country):
+        print("Population: " + country)
+        flag = True
+    if dic.get(country, country).replace(' ','-') not in files and country!='Antarctica':
+        print('OS FILE: ' + country)
         flag = True
     if flag:
         break
+
