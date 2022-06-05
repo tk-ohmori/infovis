@@ -1,5 +1,14 @@
 class BarChart{
     constructor(config, data){
+        data.forEach( d => {
+            d.Android = ((+d.Android) * (+d.Population))/100.0;
+            d.iOS = ((+d.iOS) * (+d.Population))/100.0;
+            d.Samsung = ((+d.Samsung) * (+d.Population))/100.0;
+            d.KaiOS = ((+d.KaiOS) * (+d.Population))/100.0;
+            d.Windows = ((+d.Windows) * (+d.Population))/100.0;
+            d.Others = ((+d.Others) * (+d.Population))/100.0;
+        });
+
         this.config = {
             parent: config.parent || '#bar_region',
             width: config.width || 600,
@@ -17,7 +26,7 @@ class BarChart{
             .attr('height', this.config.height);
 
         this.chart = this.svg.append('g')
-            .attr('transform', `translate(${this.config.margin.left}, ${this.config.margin.top})`);
+            // .attr('transform', `translate(${this.config.margin.left}, ${this.config.margin.top})`);
 
         this.inner_width = this.config.width - this.config.margin.left - this.config.margin.right;
         this.inner_height = this.config.height - this.config.margin.top - this.config.margin.bottom;
@@ -51,14 +60,52 @@ class BarChart{
         this.gdp_min = d3.min(this.data, d => d.GDP_per_capita);
         this.gdp_max = d3.max(this.data, d => d.GDP_per_capita);
 
-        this.xscale.domain(this.data.map(d => d.Country));
-        this.yscale.domain([0, this.gdp_max]);
+        this.selected_data = this.data.filter(d => selected.includes(d.Country));
+
+        this.series = d3.stack()
+            .keys(['Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
+
+        this.xscale.domain(this.selected_data.map(d => d.Country));
+        this.yscale.domain([0, d3.max(this.series, d => d3.sum(d, d => d[1]))]);
+
+        this.bar_color = d3.scaleOrdinal()
+            .domain(this.series.map(d => d.key))
+            .range(d3.schemeCategory10.slice(0, this.series.length))
+            .unknown('#ccc');
 
         this.render();
     }
 
     render(){
-        // this.chart.selectAll('.bar')
-        //     .data()
+        this.rects = this.chart.selectAll('g')
+            .data(this.series)
+            // .join('g')
+            .enter()
+            .append('g')
+            .attr('fill', d => this.bar_color(d.key))
+            .selectAll('rect')
+            .data(d => d)
+            // .join('rect')
+            .enter()
+            .append('rect')
+            .attr('x', (d, i) => this.xscale(d.data.Country))
+            .attr('y', d => this.yscale(d[1]))
+            .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
+            .attr('width', this.xscale.bandwidth());
+
+        // this.rects.exit().remove();
+
+        // this.rects.enter()
+        //     .append('rect')
+        //     .attr('x', d => this.xscale(d.Country))
+        //     .attr('y', d => this.yscale(d.Population))
+        //     .attr('width', this.xscale.bandwidth())
+        //     .attr('height', d => this.inner_height - this.yscale(d.Population));
+
+        this.xaxis_group
+            .call(this.xaxis);
+
+        this.yaxis_group
+            .call(this.yaxis);
     }
 }
