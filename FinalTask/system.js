@@ -2,13 +2,13 @@ let selected = ['Japan', 'United-States-of-America', 'China', 'Republic-of-Korea
 let bar_chart;
 let geo_map;
 
-d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask.csv')
+d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask2.csv')
     .then(function(data) {
         bar_chart = new BarChart({
             parent: '#bar_region',
-            width: 600,
+            width: 800,
             height: 400,
-            margin: {top:10, right:40, bottom:30, left:40}
+            margin: {top:30, right:40, bottom:30, left:100}
         }, data);
         bar_chart.update();
     });

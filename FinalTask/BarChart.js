@@ -26,7 +26,9 @@ class BarChart{
             .attr('height', this.config.height);
 
         this.chart = this.svg.append('g')
-            // .attr('transform', `translate(${this.config.margin.left}, ${this.config.margin.top})`);
+            .attr('transform', `translate(${this.config.margin.left}, ${this.config.margin.top})`);
+
+        this.os_list = ['Android','iOS','Samsung','KaiOS','Windows','Others'];
 
         this.inner_width = this.config.width - this.config.margin.left - this.config.margin.right;
         this.inner_height = this.config.height - this.config.margin.top - this.config.margin.bottom;
@@ -61,7 +63,8 @@ class BarChart{
         this.selected_data = this.data.filter(d => selected.includes(d.Country));
 
         this.series = d3.stack()
-            .keys(['d1','d2','Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
+            .keys(['Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
+            // .keys(this.os_list)(this.selected_data);
 
         this.xscale.domain(this.selected_data.map(d => d.Country));
         this.yscale.domain([0, d3.max(this.series, d => d3.max(d, d => d[1]))]);
@@ -71,12 +74,12 @@ class BarChart{
             .range(d3.schemeCategory10.slice(0, this.series.length))
             .unknown('#ccc');
 
-        for(let i in this.series){
-            console.log(this.series[i])
-            this.series[i].forEach(d => console.log(d.data.Country + ' : ' + this.yscale(d[1])))
-            this.series[i].forEach(d => console.log(d.data.Country + ' : ' + (this.yscale(d[0]) - this.yscale(d[1]))))
-            console.log('\n')
-        }
+        // for(let i in this.series){
+        //     console.log(this.series[i])
+        //     this.series[i].forEach(d => console.log(d.data.Country + ' : ' + this.yscale(d[1])))
+        //     this.series[i].forEach(d => console.log(d.data.Country + ' : ' + (this.yscale(d[0]) - this.yscale(d[1]))))
+        //     console.log('\n')
+        // }
 
         // console.log(this.selected_data)
         // console.log(this.series)
@@ -85,11 +88,18 @@ class BarChart{
     }
 
     render(){
-        this.rects = this.chart.selectAll('g')
+        this.rects = this.chart.selectAll('gg')
             .data(this.series)
             // .join('g')
+
+        this.rects.exit().remove();
+
+        // 消えない
+            
+        this.rects
             .enter()
             .append('g')
+            .merge(this.rects)
             .attr('fill', d => this.bar_color(d.key))
             .selectAll('rect')
             .data(d => d)
@@ -101,20 +111,42 @@ class BarChart{
             .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
             .attr('width', this.xscale.bandwidth());
 
-        // this.rects.exit().remove();
-
-        // this.rects.enter()
-        //     .append('rect')
-        //     .attr('x', d => this.xscale(d.Country))
-        //     .attr('y', d => this.yscale(d.Population))
-        //     .attr('width', this.xscale.bandwidth())
-        //     .attr('height', d => this.inner_height - this.yscale(d.Population));
-
         this.xaxis_group
             .call(this.xaxis);
 
         this.yaxis_group
             .call(this.yaxis);
+
+        var legend = this.chart.selectAll('.legend')
+            .data(this.os_list)
+            .enter()
+            .append('g')
+            .attr('class','legend')
+
+        legend.append('rect') // 凡例の色付け四角
+            .attr("x", 0)
+            .attr("y", 10)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", d => this.bar_color(d)) // 色付け
+
+        legend.append('text')  // 凡例の文言
+            .attr("x", 20)
+            .attr("y", 20)
+            .text(function (d, i) {	return d ; })
+            .attr("class", "textselected")
+            .style("text-anchor", "start")
+            .style("font-size", 15);
+
+        var top = this.config.margin.top;
+        legend.attr('transform', function(d,i) {
+            var pos = 0;
+            for(let j=0;j<i;j++) {
+                pos += legend['_groups'][0][j].getBBox().width + 20;
+            }
+            return `translate(${pos}, -${top})`; 
+        })
+
     }
     
 }

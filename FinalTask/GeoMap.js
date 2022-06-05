@@ -102,7 +102,6 @@ class GeoMap{
                 else selected.push(c_name);
                 this.render();
                 bar_chart.update();
-                
             });
     }
 }
