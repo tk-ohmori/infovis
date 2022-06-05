@@ -68,8 +68,6 @@ class GeoMap{
                 this.isGDP = false;
                 this.update();
             });
-
-        this.update();
     }
 
     update(){

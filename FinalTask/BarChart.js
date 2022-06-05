@@ -52,8 +52,6 @@ class BarChart{
             .attr('text-anchor', 'middle')
             .attr('transform', `translate(7, ${this.config.height/2})`)
             .attr('font-weight', 'bold');
-        
-        this.update();
     }
 
     update(){
@@ -63,15 +61,25 @@ class BarChart{
         this.selected_data = this.data.filter(d => selected.includes(d.Country));
 
         this.series = d3.stack()
-            .keys(['Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
+            .keys(['d1','d2','Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
 
         this.xscale.domain(this.selected_data.map(d => d.Country));
-        this.yscale.domain([0, d3.max(this.series, d => d3.sum(d, d => d[1]))]);
+        this.yscale.domain([0, d3.max(this.series, d => d3.max(d, d => d[1]))]);
 
         this.bar_color = d3.scaleOrdinal()
             .domain(this.series.map(d => d.key))
             .range(d3.schemeCategory10.slice(0, this.series.length))
             .unknown('#ccc');
+
+        for(let i in this.series){
+            console.log(this.series[i])
+            this.series[i].forEach(d => console.log(d.data.Country + ' : ' + this.yscale(d[1])))
+            this.series[i].forEach(d => console.log(d.data.Country + ' : ' + (this.yscale(d[0]) - this.yscale(d[1]))))
+            console.log('\n')
+        }
+
+        // console.log(this.selected_data)
+        // console.log(this.series)
 
         this.render();
     }
@@ -108,4 +116,5 @@ class BarChart{
         this.yaxis_group
             .call(this.yaxis);
     }
+    
 }
