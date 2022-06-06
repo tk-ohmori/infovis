@@ -45,10 +45,10 @@ class BarChart{
 
         this.yaxis = d3.axisLeft(this.yscale);
 
-        this.xaxis_group = this.chart.append('g')
-            .attr('transform', `translate(0, ${this.inner_height})`);
+        // this.xaxis_group = this.chart.append('g')
+        //     .attr('transform', `translate(0, ${this.inner_height})`);
         
-        this.yaxis_group = this.chart.append('g');
+        // this.yaxis_group = this.chart.append('g');
 
         this.yaxis_label = this.svg.append('text')
             .attr('text-anchor', 'middle')
@@ -60,7 +60,8 @@ class BarChart{
         this.gdp_min = d3.min(this.data, d => d.GDP_per_capita);
         this.gdp_max = d3.max(this.data, d => d.GDP_per_capita);
 
-        this.selected_data = this.data.filter(d => selected.includes(d.Country));
+        // this.selected_data = this.data.filter(d => selected.includes(d.Country));
+        this.selected_data = selected.map(c => this.data.find(d => d.Country==c));
 
         this.series = d3.stack()
             .keys(['Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
@@ -88,33 +89,58 @@ class BarChart{
     }
 
     render(){
-        this.rects = this.chart.selectAll('gg')
-            .data(this.series)
-            // .join('g')
+        // this.rects = this.chart.selectAll('gg')
+        //     .data(this.series)
+        //     // .join('g')
 
-        this.rects.exit().remove();
+        // this.rects.exit().remove();
 
-        // 消えない
+        // // 消えない
             
-        this.rects
+        // this.rects
+        //     .enter()
+        //     .append('g')
+        //     .merge(this.rects)
+        //     .attr('fill', d => this.bar_color(d.key))
+        //     .selectAll('rect')
+        //     .data(d => d)
+        //     // .join('rect')
+        //     .enter()
+        //     .append('rect')
+        //     .attr('x', (d, i) => this.xscale(d.data.Country))
+        //     .attr('y', d => this.yscale(d[1]))
+        //     .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
+        //     .attr('width', this.xscale.bandwidth());
+
+        this.chart.selectAll('g').remove();
+
+        this.chart.selectAll('.g')
+            .data(this.series)
             .enter()
             .append('g')
-            .merge(this.rects)
             .attr('fill', d => this.bar_color(d.key))
             .selectAll('rect')
             .data(d => d)
-            // .join('rect')
             .enter()
             .append('rect')
             .attr('x', (d, i) => this.xscale(d.data.Country))
             .attr('y', d => this.yscale(d[1]))
             .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
             .attr('width', this.xscale.bandwidth());
-
-        this.xaxis_group
-            .call(this.xaxis);
-
-        this.yaxis_group
+        
+        this.chart
+            .append('g')
+            .attr('transform', `translate(0, ${this.inner_height})`)
+            .call(this.xaxis)
+            .selectAll('text')
+            .html(d => d.replaceAll('-', ' '))
+            .attr('transform', 'rotate(45)')
+            .attr('font-weight', 'bold')
+            .attr('font-size', 12)
+            .attr('text-anchor', 'start');
+        
+        this.chart
+            .append('g')
             .call(this.yaxis);
 
         var legend = this.chart.selectAll('.legend')
@@ -123,14 +149,14 @@ class BarChart{
             .append('g')
             .attr('class','legend')
 
-        legend.append('rect') // 凡例の色付け四角
+        legend.append('rect')
             .attr("x", 0)
             .attr("y", 10)
             .attr("width", 10)
             .attr("height", 10)
-            .style("fill", d => this.bar_color(d)) // 色付け
+            .style("fill", d => this.bar_color(d))
 
-        legend.append('text')  // 凡例の文言
+        legend.append('text')
             .attr("x", 20)
             .attr("y", 20)
             .text(function (d, i) {	return d ; })
