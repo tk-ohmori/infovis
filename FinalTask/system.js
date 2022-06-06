@@ -6,9 +6,9 @@ d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask2.csv')
     .then(function(data) {
         bar_chart = new BarChart({
             parent: '#bar_region',
-            width: 700,
+            width: 800,
             height: 600,
-            margin: {top:30, right:40, bottom:140, left:100}
+            margin: {top:30, right:100, bottom:140, left:100}
         }, data);
         bar_chart.update();
     });

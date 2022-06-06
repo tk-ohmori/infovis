@@ -7,13 +7,15 @@ class BarChart{
             d.KaiOS = ((+d.KaiOS) * (+d.Population))/100.0;
             d.Windows = ((+d.Windows) * (+d.Population))/100.0;
             d.Others = ((+d.Others) * (+d.Population))/100.0;
+            // d.GDP_per_capita = +d.GDP_per_capita;
         });
 
         this.config = {
             parent: config.parent || '#bar_region',
             width: config.width || 600,
             height: config.height || 400,
-            margin: config.margin || {top:10, right:40, bottom:30, left:40}
+            margin: config.margin || {top:10, right:40, bottom:30, left:40},
+            label: config.label || {yaxis_left:'Population', yaxis_right:'GDP per capita'}
         };
 
         this.data = data;
@@ -41,18 +43,23 @@ class BarChart{
         this.yscale = d3.scaleLinear()
             .range([this.inner_height, 0]);
 
+        this.gdp_scale = d3.scaleLinear()
+            .range([this.inner_height, 0]);
+
         this.xaxis = d3.axisBottom(this.xscale);
 
         this.yaxis = d3.axisLeft(this.yscale);
 
-        // this.xaxis_group = this.chart.append('g')
-        //     .attr('transform', `translate(0, ${this.inner_height})`);
-        
-        // this.yaxis_group = this.chart.append('g');
+        this.gdp_axis = d3.axisRight(this.gdp_scale);
 
         this.yaxis_label = this.svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', `translate(7, ${this.config.height/2})`)
+            .attr('transform', `translate(7, ${this.config.height/2}) rotate(90)`)
+            .attr('font-weight', 'bold');
+        
+        this.gdp_axis_label = this.svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', `translate(${this.config.width-30}, ${this.config.height/2}) rotate(90)`)
             .attr('font-weight', 'bold');
     }
 
@@ -60,58 +67,28 @@ class BarChart{
         this.gdp_min = d3.min(this.data, d => d.GDP_per_capita);
         this.gdp_max = d3.max(this.data, d => d.GDP_per_capita);
 
-        // this.selected_data = this.data.filter(d => selected.includes(d.Country));
         this.selected_data = selected.map(c => this.data.find(d => d.Country==c));
 
         this.series = d3.stack()
-            .keys(['Android','iOS','Samsung','KaiOS','Windows','Others'])(this.selected_data);
-            // .keys(this.os_list)(this.selected_data);
+            .keys(this.os_list)(this.selected_data);
+
+            console.log(this.selected_data)
+            console.log(d3.max(this.selected_data, d => d.GDP_per_capita))
 
         this.xscale.domain(this.selected_data.map(d => d.Country));
         this.yscale.domain([0, d3.max(this.series, d => d3.max(d, d => d[1]))]);
+        this.gdp_scale.domain([0, d3.max(this.selected_data, d => +d.GDP_per_capita)]);
+
 
         this.bar_color = d3.scaleOrdinal()
             .domain(this.series.map(d => d.key))
             .range(d3.schemeCategory10.slice(0, this.series.length))
             .unknown('#ccc');
 
-        // for(let i in this.series){
-        //     console.log(this.series[i])
-        //     this.series[i].forEach(d => console.log(d.data.Country + ' : ' + this.yscale(d[1])))
-        //     this.series[i].forEach(d => console.log(d.data.Country + ' : ' + (this.yscale(d[0]) - this.yscale(d[1]))))
-        //     console.log('\n')
-        // }
-
-        // console.log(this.selected_data)
-        // console.log(this.series)
-
         this.render();
     }
 
     render(){
-        // this.rects = this.chart.selectAll('gg')
-        //     .data(this.series)
-        //     // .join('g')
-
-        // this.rects.exit().remove();
-
-        // // 消えない
-            
-        // this.rects
-        //     .enter()
-        //     .append('g')
-        //     .merge(this.rects)
-        //     .attr('fill', d => this.bar_color(d.key))
-        //     .selectAll('rect')
-        //     .data(d => d)
-        //     // .join('rect')
-        //     .enter()
-        //     .append('rect')
-        //     .attr('x', (d, i) => this.xscale(d.data.Country))
-        //     .attr('y', d => this.yscale(d[1]))
-        //     .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
-        //     .attr('width', this.xscale.bandwidth());
-
         this.chart.selectAll('g').remove();
 
         this.chart.selectAll('.g')
@@ -128,13 +105,38 @@ class BarChart{
             .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
             .attr('width', this.xscale.bandwidth());
         
+        this.chart.select('path').remove();
+        this.chart.append('path')
+            .datum(this.selected_data)
+            .attr('fill', 'none')
+            .attr('stroke', 'red')
+            .attr('stroke-width', 2)
+            .attr('d', d3.line()
+                .x(d => this.xscale(d.Country) + this.xscale.bandwidth()/2)
+                .y(d => this.gdp_scale(d.GDP_per_capita)));
+        
+        this.chart.append('text')
+            .attr('x', this.inner_width - 120)
+            .attr('y', 25)
+            .attr('font-size', 12)
+            .text('GDP per capita');
+        
+        this.chart.append('line')
+            .attr('x1', this.inner_width - 30)
+            .attr('x2', this.inner_width - 10)
+            .attr('y1', 20)
+            .attr('y2', 20)
+            .attr('fill', 'none')
+            .attr('stroke', 'red')
+            .attr('stroke-width', 1.5);
+        
         this.chart
             .append('g')
             .attr('transform', `translate(0, ${this.inner_height})`)
             .call(this.xaxis)
             .selectAll('text')
             .html(d => d.replaceAll('-', ' '))
-            .attr('transform', 'rotate(45)')
+            .attr('transform', 'rotate(30)')
             .attr('font-weight', 'bold')
             .attr('font-size', 12)
             .attr('text-anchor', 'start');
@@ -142,6 +144,17 @@ class BarChart{
         this.chart
             .append('g')
             .call(this.yaxis);
+
+        this.chart
+            .append('g')
+            .call(this.gdp_axis)
+            .attr('transform', `translate(${this.inner_width}, 0)`);
+
+        this.yaxis_label
+            .text(this.config.label.yaxis_left);
+
+        this.gdp_axis_label
+            .text(this.config.label.yaxis_right);
 
         var legend = this.chart.selectAll('.legend')
             .data(this.os_list)

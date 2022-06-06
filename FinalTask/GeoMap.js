@@ -32,7 +32,6 @@ class GeoMap{
 
         this.gdpColorScale = d3.interpolateYlOrRd;
 
-        // this.OSColor = ['crimson', 'darkblue', 'darkgreen', 'chocolate', 'indigo','white'];
         this.OSColor = {'Android':'mediumvioletred', 'iOS':'dodgerblue', 'Samsung':'lightgreen', 'KaiOS':'peachpuff', 'Windows':'iturquoise','Others':'white'};
 
         this.isGDP = true;
