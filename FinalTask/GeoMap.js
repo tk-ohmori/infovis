@@ -70,7 +70,8 @@ class GeoMap{
     }
 
     update(){
-        this.gdpScale.domain([bar_chart.gdp_min, bar_chart.gdp_max]);
+        this.gdpScale.domain([d3.min(bar_chart.data, d => d.GDP_per_capita), d3.max(bar_chart.data, d => d.GDP_per_capita)]);
+        // this.gdpScale.domain([bar_chart.gdp_min, bar_chart.gdp_max]);
    
         this.render();
     }
