@@ -72,9 +72,6 @@ class BarChart{
         this.series = d3.stack()
             .keys(this.os_list)(this.selected_data);
 
-            console.log(this.selected_data)
-            console.log(d3.max(this.selected_data, d => d.GDP_per_capita))
-
         this.xscale.domain(this.selected_data.map(d => d.Country));
         this.yscale.domain([0, d3.max(this.series, d => d3.max(d, d => d[1]))]);
         this.gdp_scale.domain([0, d3.max(this.selected_data, d => +d.GDP_per_capita)]);
