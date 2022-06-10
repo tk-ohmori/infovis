@@ -88,7 +88,7 @@ class BarChart{
     render(){
         this.chart.selectAll('g').remove();
 
-        this.chart.selectAll('.g')
+        this.rects = this.chart.selectAll('.g')
             .data(this.series)
             .enter()
             .append('g')
@@ -97,10 +97,56 @@ class BarChart{
             .data(d => d)
             .enter()
             .append('rect')
-            .attr('x', (d, i) => this.xscale(d.data.Country))
+            
+        this.rects.attr('x', (d, i) => this.xscale(d.data.Country))
             .attr('y', d => this.yscale(d[1]))
             .attr('height', d => this.yscale(d[0]) - this.yscale(d[1]))
             .attr('width', this.xscale.bandwidth());
+            
+        this.os_share_str = function(d){
+            var str = '';
+            if(d.Android!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; Android : ${(100.0*d.Android/(+d.Population)).toFixed(2)} %<br>`
+            }
+            if(d.iOS!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; iOS : ${(100.0*d.iOS/(+d.Population)).toFixed(2)} %<br>`
+            }
+            if(d.Samsung!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; Samsung : ${(100.0*d.Samsung/(+d.Population)).toFixed(2)} %<br>`
+            }
+            if(d.KaiOS!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; KaiOS : ${(100.0*d.KaiOS/(+d.Population)).toFixed(2)} %<br>`
+            }
+            if(d.Windows!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; Windows : ${(100.0*d.Windows/(+d.Population)).toFixed(2)} %<br>`
+            }
+            if(d.Others!=0){
+                str += `&nbsp;&nbsp;&nbsp;&nbsp; Others : ${(100.0*d.Others/(+d.Population)).toFixed(2)} %<br>`
+            }
+            return str;
+        }
+
+        this.rects
+            .on('mouseover', (e, d) => {
+                d3.select('#tooltip')
+                    .style('opacity', 1)
+                    .html(`${d.data.Country.replaceAll('-', ' ')} <br>
+                    Population : ${(+d.data.Population).toLocaleString()}<br>
+                    GDP per capita : ${d.data.GDP_per_capita} $ <br>
+                    OS Share : <br>` + this.os_share_str(d.data));
+                // console.log(d)
+            })
+            .on('mousemove', (e, d) => {
+                const padding = 10;
+                d3.select('#tooltip')
+                    .style('left', (e.pageX + padding) + 'px')
+                    .style('top', (e.pageY + padding) + 'px');
+            })
+            .on('mouseleave', (e) => {
+                d3.select('#tooltip')
+                    .style('opacity', 0);
+                // e.target.style.fill = '';
+            });
         
         this.chart.select('path').remove();
         this.chart.append('path')

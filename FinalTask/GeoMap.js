@@ -33,6 +33,7 @@ class GeoMap{
         this.gdpColorScale = d3.interpolateYlOrRd;
 
         this.OSColor = {'Android':'mediumvioletred', 'iOS':'dodgerblue', 'Samsung':'lightgreen', 'KaiOS':'peachpuff', 'Windows':'iturquoise','Others':'white'};
+        this.os_index = {'Android':0, 'iOS':1, 'Samsung':2, 'KaiOS':3, 'Windows':4,'Others':5};
 
         this.isGDP = true;
 
@@ -52,7 +53,8 @@ class GeoMap{
                 else return this.gdpColorScale(this.gdpScale(getGDP(name)));
             }else{
                 if(getTopOS(name)=='N/A') return 'white';
-                else return this.OSColor[getTopOS(name)];
+                // else return this.OSColor[getTopOS(name)];
+                else return d3.schemeCategory10[this.os_index[getTopOS(name)]];
             }
         };
 
@@ -91,9 +93,21 @@ class GeoMap{
             .attr('stroke-width', d => this.strokeWidth(d.properties.name))
             .attr('fill', d => this.fillColor(d.properties.name))
             .on('mouseover', (e, d) => {
+                d3.select('#tooltip')
+                    .style('opacity', 1)
+                    .html(d.properties.name);
                 e.target.setAttribute('fill', 'white');
             })
+            .on('mousemove', (e, d) => {
+                const padding = 10;
+                d3.select('#tooltip')
+                    .style('left', (e.pageX + padding) + 'px')
+                    .style('top', (e.pageY + padding) + 'px');
+            })
             .on('mouseleave', (e, d) => {
+                d3.select('#tooltip')
+                    .style('opacity', 0);
+                // e.target.style.fill = '';
                 e.target.setAttribute('fill', this.fillColor(d.properties.name));
             })
             .on('click', (e, d) => {

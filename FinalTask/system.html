@@ -3,31 +3,45 @@
         <title>Final Task</title>
         <meta charset="utf-8"/>
         <style>
-            /* #bar_region{
+            #bar_region{
+                display:inline-block;
+                vertical-align: top;
             }
             #map_section{
-            } */
-            .wrap{
-                display:flex;
+                display:inline-block;
+                vertical-align: top;
             }
             .buttons{
                 display:flex;
                 justify-content:center;
             }
+            #tooltip {
+                position: absolute;
+                opacity: 0;
+                background: #fff;
+                border: 1px solid #ddd;
+                font-size: 12px;
+                font-weight: 600;
+                padding: 2px 8px;
+            }
+            .tooltip-label {
+                font-weight: 500;
+                font-size: 11px;
+                color: #888;
+            }
         </style>
     </head>
     <body>
-        <div class="wrap">
-            <svg id="bar_region"></svg>
-            <div id="map_section">
-                <svg id="map_region"></svg>
-                <br>
-                <div class="buttons">
-                    <button type="button" id="GDP">GDP per capita</button>
-                    <button type="button" id="TopOS">Top OS</button>
-                </div>
+        <svg id="bar_region"></svg>
+        <div id="map_section">
+            <svg id="map_region"></svg>
+            <br>
+            <div class="buttons">
+                <button type="button" id="GDP">GDP per capita</button>
+                <button type="button" id="TopOS">Top OS</button>
             </div>
         </div>
+        <div id="tooltip"></div>
         <script src="https://d3js.org/d3.v6.min.js"></script>
         <script src="https://unpkg.com/topojson@3"></script>
         <script src="BarChart.js"></script>
