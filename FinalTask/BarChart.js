@@ -130,6 +130,7 @@ class BarChart{
             .on('mouseover', (e, d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
+                    .style('z-index', 1)
                     .html(`${d.data.Country.replaceAll('-', ' ')} <br>
                     Population : ${(+d.data.Population).toLocaleString()}<br>
                     GDP per capita : ${d.data.GDP_per_capita} $ <br>
@@ -144,7 +145,8 @@ class BarChart{
             })
             .on('mouseleave', (e) => {
                 d3.select('#tooltip')
-                    .style('opacity', 0);
+                    .style('opacity', 0)
+                    .style('z-index',-1);
                 // e.target.style.fill = '';
             });
         

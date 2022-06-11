@@ -3,17 +3,17 @@
         <title>Final Task</title>
         <meta charset="utf-8"/>
         <style>
-            #bar_region{
-                display:inline-block;
+            #bar_section{
+                display: inline-block;
                 vertical-align: top;
             }
             #map_section{
-                display:inline-block;
+                display: inline-block;
                 vertical-align: top;
             }
             .buttons{
-                display:flex;
-                justify-content:center;
+                display: flex;
+                justify-content: center;
             }
             #tooltip {
                 position: absolute;
@@ -23,16 +23,29 @@
                 font-size: 12px;
                 font-weight: 600;
                 padding: 2px 8px;
-            }
-            .tooltip-label {
-                font-weight: 500;
-                font-size: 11px;
-                color: #888;
+                z-index: -1;
             }
         </style>
     </head>
     <body>
-        <svg id="bar_region"></svg>
+        <div id="bar_section">
+            <svg id="bar_region"></svg>
+            <br>
+            <div class="buttons">
+                <button type="button" id="GDP_Top10">GDP Top 10</button>
+                <button type="button" id="GDP_Top11_20">GDP Top 11-20</button>
+                <button type="button" id="GDP_Top21_30">GDP Top 21-30</button>
+            </div>
+            <br>
+            <div class="buttons">
+                <input type="checkbox" id="popfilter">
+                <label for="">GDP Top with Population filter : </label>
+                &nbsp; more than
+                <input type="number" id="lower_bound">
+                &nbsp; less than
+                <input type="number" id="upper_bound">
+            </div>
+        </div>
         <div id="map_section">
             <svg id="map_region"></svg>
             <br>

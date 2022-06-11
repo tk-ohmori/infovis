@@ -69,11 +69,59 @@ class GeoMap{
                 this.isGDP = false;
                 this.update();
             });
+        
     }
 
     update(){
         this.gdpScale.domain([d3.min(bar_chart.data, d => d.GDP_per_capita), d3.max(bar_chart.data, d => d.GDP_per_capita)]);
         // this.gdpScale.domain([bar_chart.gdp_min, bar_chart.gdp_max]);
+
+        this.pop_filter = function(){
+            var lower_bound = 0;
+            var upper_bound = 9999999999999999999999999999999999;
+            if(document.getElementById('popfilter').checked){
+                var lb = document.getElementById('lower_bound').value;
+                var ub = document.getElementById('upper_bound').value;
+                if(lb!="") lower_bound = +lb;
+                if(ub!="") upper_bound = +ub;
+                return bar_chart.data.filter(d => (d.Population>=lower_bound) && (d.Population<=upper_bound));
+            }
+            return bar_chart.data;
+        }
+
+
+        d3.select('#GDP_Top10')
+            .on('click', d => {
+                var bar_datas = this.pop_filter();
+                selected = bar_datas.sort(function(x1, x2){
+                    if((+x1.GDP_per_capita) < (+x2.GDP_per_capita)) return 1;
+                    else return -1;
+                }).slice(0,10).map(d => d.Country);
+                this.update();
+                bar_chart.update();
+            });
+
+        d3.select('#GDP_Top11_20')
+            .on('click', d => {
+                var bar_datas = this.pop_filter();
+                selected = bar_datas.sort(function(x1, x2){
+                    if((+x1.GDP_per_capita) < (+x2.GDP_per_capita)) return 1;
+                    else return -1;
+                }).slice(11,20).map(d => d.Country);
+                this.update();
+                bar_chart.update();
+            });
+
+        d3.select('#GDP_Top21_30')
+            .on('click', d => {
+                var bar_datas = this.pop_filter();
+                selected = bar_datas.sort(function(x1, x2){
+                    if((+x1.GDP_per_capita) < (+x2.GDP_per_capita)) return 1;
+                    else return -1;
+                }).slice(21,30).map(d => d.Country);
+                this.update();
+                bar_chart.update();
+            });
    
         this.render();
     }
