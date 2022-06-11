@@ -2,7 +2,7 @@ let selected = ['Japan', 'United-States-of-America', 'China', 'Republic-of-Korea
 let bar_chart;
 let geo_map;
 
-d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask.csv')
+d3.csv('https://tk-ohmori.github.io/infovis/FinalTask/data/finaltask2.csv')
     .then(function(data) {
         bar_chart = new BarChart({
             parent: '#bar_region',
