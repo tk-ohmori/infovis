@@ -143,6 +143,7 @@ class GeoMap{
             .on('mouseover', (e, d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
+                    .style('z-index', 1)
                     .html(d.properties.name);
                 e.target.setAttribute('fill', 'white');
             })
@@ -154,7 +155,8 @@ class GeoMap{
             })
             .on('mouseleave', (e, d) => {
                 d3.select('#tooltip')
-                    .style('opacity', 0);
+                    .style('opacity', 0)
+                    .style('z-index', -1);
                 // e.target.style.fill = '';
                 e.target.setAttribute('fill', this.fillColor(d.properties.name));
             })
