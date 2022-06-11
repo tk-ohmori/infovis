@@ -23,4 +23,5 @@
 
 - Final Task
     - [System](https://tk-ohmori.github.io/infovis/FinalTask/system.html)
-    - [Report]()
+    - [Report](https://tk-ohmori.github.io/infovis/FinalTask/report.pdf)
+    - [Thumbnail](https://tk-ohmori.github.io/infovis/FinalTask/thumbnail.png)
